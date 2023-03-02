@@ -1,0 +1,28 @@
+{
+  "extends": [
+    "stylelint-config-standard",
+    "stylelint-config-standard-vue",
+    "stylelint-config-recess-order",
+    "stylelint-stylus/standard",
+    "stylelint-config-prettier"
+  ],
+  "plugins": [
+    "stylelint-declaration-block-no-ignored-properties",
+    "stylelint-no-unsupported-browser-features"
+  ],
+  "rules": {
+    "plugin/declaration-block-no-ignored-properties": true,
+    "plugin/no-unsupported-browser-features": [
+      true,
+      {
+        "browsers": [
+          "Last 2 Edge versions",
+          "Last 2 Chrome versions",
+          "Last 2 ios_saf versions",
+          "Last 2 ChromeAndroid versions"
+        ]
+      }
+    ],
+    "stylus/declaration-colon": "always"
+  }
+}
