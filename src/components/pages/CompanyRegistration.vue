@@ -20,21 +20,30 @@ let company: Company = reactive({
   address: '',
 });
 
+// 最新の法人一覧を取得
+// ページ描画時には取得されない
 const companies = computed<Array<Company>>(() => store.getters.getCompanies);
+
+//  現在の法人を取得 初期値 id:null
 const currentCompany = store.getters.getCompany;
 if (currentCompany.id === null) {
   company = currentCompany;
 }
 
+// 選択キーワードを含む法人を取得したい
 const searchCompanies = () => {
   store.dispatch('searchCompanies');
 };
 
+//  法人データを登録
+//  オフィスstepのstateをtrue(これからofficeの設定です)
 const selectCompany = (thisCompany: Company) => {
   store.dispatch('setCompany', thisCompany);
   router.push('/OfficeRegistration');
 };
 
+// 法人データを再登録
+// 次へボタン
 const saveCompany = () => {
   store.dispatch('setCompany', company);
   router.push('/OfficeRegistration');
@@ -50,6 +59,7 @@ const saveCompany = () => {
         法人名のキーワードを入力して、検索するボタンを押してください。
       </p>
 
+      <!-- 選択キーワードを含む法人を取得したい -->
       <div class="content-search__form">
         <TritrusTextField label="法人名" required clearable />
         <TritrusButton btn-type="search" @click="searchCompanies"
@@ -70,6 +80,7 @@ const saveCompany = () => {
             <p>表示されない場合、新規登録が必要になります。</p>
           </div>
 
+          <!-- 法人の検索とテーブル表示 -->
           <SelectDataTable
             :itemData="companies"
             headerName="法人名"

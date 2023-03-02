@@ -22,6 +22,8 @@ const store = useStore();
 const router = useRouter();
 
 store.dispatch('getOffices');
+
+// selevtの項目と取得した該当施設の一覧
 const categoryItems = computed<Array<CategoryObj>>(() => [
   {
     text: '医療機関',

@@ -17,7 +17,7 @@ interface State {
 
 export const key: InjectionKey<Store<State>> = Symbol('InjectionKey');
 
-// axios.defaults.baseURL = 'http://localhost:3003';
+axios.defaults.baseURL = 'http://localhost:3003';
 
 export const store = createStore<State>({
   state: {
@@ -115,7 +115,9 @@ export const store = createStore<State>({
     setCompany({ commit }, company: Company) {
       commit('setCompany', company);
     },
+    // 施設一覧をapiから取得
     async getOffices({ commit }) {
+      // 各３種のstateへcommit
       try {
         const offices = await axios.get('/Offices');
         commit('setHospitals', offices.data.hospitals);

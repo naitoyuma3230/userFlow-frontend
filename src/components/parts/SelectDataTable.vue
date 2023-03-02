@@ -16,6 +16,8 @@ const emits = defineEmits<{
 const COUNT = 5;
 const page = ref<number>(1);
 
+// pagenationの設定
+// 表示する法人をpagenationに応じて算出
 const items = computed<Array<Item>>(() => {
   const start = (page.value - 1) * COUNT;
   const end = start + COUNT;
@@ -23,10 +25,12 @@ const items = computed<Array<Item>>(() => {
   return props.itemData.slice(start, end);
 });
 
+// 1ページあたりの表示data数
 const pageLength = computed<number>(() =>
   Math.floor(props.itemData.length / COUNT + 1)
 );
 
+// 選択した法人をemit
 const itemClick = (item: Item): void => {
   emits('selectItem', item);
 };

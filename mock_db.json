@@ -189,5 +189,22 @@
       }
     ]
   },
-  "newUser": []
+  "newUser": [
+    {
+      "users[0][firstName]": "test",
+      "users[0][lastName]": "test",
+      "users[0][firstNameKana]": "tset",
+      "users[0][lastNameKana]": "test",
+      "users[0][email]": "test",
+      "users[0][occupation]": "医師",
+      "company[name]": "社会",
+      "company[postCode]": "123-456",
+      "company[address]": "Yakumo",
+      "office[id]": "1",
+      "office[name]": "bbb介護",
+      "office[postCode]": "0001234",
+      "office[address]": "xxx",
+      "id": 1
+    }
+  ]
 }
