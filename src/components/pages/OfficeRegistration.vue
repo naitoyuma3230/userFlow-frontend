@@ -21,6 +21,7 @@ interface CategoryObj {
 const store = useStore();
 const router = useRouter();
 
+// ofice一覧を取得
 store.dispatch('getOffices');
 
 // selevtの項目と取得した該当施設の一覧
@@ -53,14 +54,17 @@ const officeCategory: OfficeCategory = store.getters.getOfficeCategory;
 
 const selectedItem = categoryItems.value.find(
   (item) => item.value === officeCategory
-);
+)
 
-const categoryObj = ref<CategoryObj | null>(selectedItem || null);
+// 検索結果
+const categoryObj = ref<CategoryObj | null>(selectedItem || null)
 
+// selectCategoryのpath情報からRouterで表示
 const selectCategory = (): void => {
   router.push({ name: categoryObj.value?.pathName });
 };
 
+// globalな状態を更新
 const selectOffice = (thisOffice: Office): void => {
   store.dispatch('setOffice', {
     office: thisOffice,
@@ -68,6 +72,17 @@ const selectOffice = (thisOffice: Office): void => {
   });
   router.push('/user');
 };
+
+const searchFieldKeyword = ref<string>('')
+
+const searchCarehome = (keyword: string) => {
+  store.dispatch('searchCarehome', keyword)
+}
+
+const textFieldInputHandler = () => {
+  searchCarehome(searchFieldKeyword.value)
+}
+
 </script>
 
 <template>
@@ -76,49 +91,30 @@ const selectOffice = (thisOffice: Office): void => {
 
     <div class="content-search content__message">
       <p class="content-search__message">所属機関の種類を選択してください。</p>
-      <v-select
-        label="所属機関"
-        :items="categoryItems"
-        item-title="text"
-        item-value="value"
-        v-model="categoryObj"
-        class="content-search__form"
-        variant="outlined"
-        @update:model-value="selectCategory"
-        return-object
-      />
+      <v-select label="所属機関" :items="categoryItems" item-title="text" item-value="value" v-model="categoryObj"
+        class="content-search__form" variant="outlined" @update:model-value="selectCategory" return-object />
     </div>
 
     <div v-if="categoryObj !== null">
       <div class="sub-content">
         <div v-if="categoryObj.officeList.length >= 1">
-          <TritrusH2 class="sub-content__title"
-            >登録されている機関の選択</TritrusH2
-          >
+          <TritrusH2 class="sub-content__title">登録されている機関の選択</TritrusH2>
 
           <div class="sub-content__message">
             <p>ご自身の所属する{{ categoryObj.label }}を選択してください。</p>
             <p>表示されない場合、新規登録が必要になります。</p>
           </div>
 
-          <!-- TODO: 絞り込み機能 -->
-          <TritrusTextField
-            :label="categoryObj.label"
-            prepend-inner-icon="icon-search"
-            clearable
-          />
 
-          <SelectDataTable
-            :itemData="categoryObj.officeList"
-            :headerName="categoryObj.label"
-            @selectItem="selectOffice"
-          />
+          <!-- TODO: 絞り込み機能 -->
+          <TritrusTextField :label="categoryObj.label" prepend-inner-icon="icon-search" v-model="searchFieldKeyword"
+            @input="textFieldInputHandler" clearable />
+
+          <SelectDataTable :itemData="categoryObj.officeList" :headerName="categoryObj.label"
+            @selectItem="selectOffice" />
         </div>
 
-        <div
-          v-else-if="categoryObj.officeList.length == 0"
-          class="sub-content__message"
-        >
+        <div v-else-if="categoryObj.officeList.length == 0" class="sub-content__message">
           登録がありません。
         </div>
       </div>

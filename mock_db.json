@@ -205,6 +205,23 @@
       "office[postCode]": "0001234",
       "office[address]": "xxx",
       "id": 1
+    },
+    {
+      "users[0][firstName]": "内藤",
+      "users[0][lastName]": "祐馬",
+      "users[0][firstNameKana]": "ナイトウ",
+      "users[0][lastNameKana]": "ユウマ",
+      "users[0][email]": "naitoyuma@outlook.jp",
+      "users[0][occupation]": "医師",
+      "company[id]": "2",
+      "company[name]": "社会福祉法人バラ",
+      "company[postCode]": "002-0002",
+      "company[address]": "京都府京都市南区西九条西柳ノ内町88-15",
+      "office[id]": "5",
+      "office[name]": "aaa医院",
+      "office[postCode]": "0001234",
+      "office[address]": "xxx",
+      "id": 2
     }
   ]
 }

@@ -1,11 +1,26 @@
 <script setup lang="ts">
-import { useAttrs } from 'vue';
+import { useAttrs, ref } from 'vue';
+import { useStore } from '@/store';
+
+const store = useStore();
 
 type ErrorRule = (value: string) => true | string;
 
 const attrs = useAttrs();
 
 const rules: Array<ErrorRule> = [];
+
+const keyword = ref<string>('')
+
+// 選択キーワードを含む法人を取得したい
+const searchCompanies = (inputKeyword: string) => {
+  store.dispatch('searchCompanies', inputKeyword);
+};
+
+const inputHandler = () => {
+  searchCompanies(keyword.value)
+}
+
 
 // rule: required
 if ('required' in attrs) {
@@ -24,10 +39,6 @@ if ('min-length' in attrs) {
 </script>
 
 <template>
-  <v-text-field
-    variant="outlined"
-    :rules="rules"
-    hide-details="auto"
-    class="text-left"
-  />
+  <v-text-field @input="inputHandler" v-model="keyword" variant="outlined" :rules="rules" hide-details="auto"
+    class="text-left" />
 </template>

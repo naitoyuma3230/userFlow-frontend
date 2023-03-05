@@ -1,6 +1,5 @@
 import { InjectionKey } from 'vue';
 import { createStore, useStore as baseUseStore, Store } from 'vuex';
-// import axios from 'axios';
 import axios from '../plugins/axios';
 
 interface State {
@@ -16,8 +15,6 @@ interface State {
 }
 
 export const key: InjectionKey<Store<State>> = Symbol('InjectionKey');
-
-axios.defaults.baseURL = 'http://localhost:3003';
 
 export const store = createStore<State>({
   state: {
@@ -103,10 +100,19 @@ export const store = createStore<State>({
   },
   actions: {
     // TODO: 文字列検索機能追加
-    async searchCompanies({ commit } /* word: string */) {
+    async searchCompanies({ commit }, keyword?: string) {
       try {
-        const companies = await axios.get('/companies');
-        commit('setCompanies', companies.data);
+        if (keyword === undefined) {
+          // キーワードなしで全件取得
+          const allCompany = await axios.get(`/company`);
+          commit('setCompanies', allCompany.data);
+        } else {
+          // キーワードありで条件一致で取得
+          const searchedCompanies = await axios.get(
+            `/company/search/${keyword}`
+          );
+          commit('setCompanies', searchedCompanies.data);
+        }
       } catch (e) {
         // TODO エラー時の処理
         console.log(e);
@@ -119,10 +125,12 @@ export const store = createStore<State>({
     async getOffices({ commit }) {
       // 各３種のstateへcommit
       try {
-        const offices = await axios.get('/Offices');
-        commit('setHospitals', offices.data.hospitals);
-        commit('setCareOffices', offices.data.careOffices);
-        commit('setOtherOffices', offices.data.otherOffices);
+        const hospital = await axios.get('/hospital');
+        const carehome = await axios.get('/carehome');
+
+        commit('setHospitals', hospital.data);
+        commit('setCareOffices', carehome.data);
+        // commit('setOtherOffices', others?.data);
       } catch (e) {
         // TODO エラー時の処理
         console.log(e);
@@ -137,6 +145,24 @@ export const store = createStore<State>({
     ) {
       commit('setOffice', { office, officeCategory });
     },
+    async searchCarehome({ commit }, keyword?: string) {
+      try {
+        if (keyword === undefined) {
+          // キーワードなしで全件取得
+          const allCarehome = await axios.get(`/carehome`);
+          commit('setCareOffices', allCarehome.data);
+        } else {
+          // キーワードありで条件一致で取得
+          const searchedCarehome = await axios.get(
+            `/company/search/${keyword}`
+          );
+          commit('setCareOffices', searchedCarehome.data);
+        }
+      } catch (e) {
+        // TODO エラー時の処理
+        console.log(e);
+      }
+    },
     setUsers({ commit }, users: Array<User>) {
       commit('setUsers', users);
     },
@@ -148,7 +174,7 @@ export const store = createStore<State>({
         office,
       };
       try {
-        await axios.post('/newUser', newUsers);
+        await axios.post('/user', newUsers);
       } catch (e) {
         // TODO エラー時の処理
         console.log(e);
