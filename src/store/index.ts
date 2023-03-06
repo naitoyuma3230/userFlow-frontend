@@ -154,7 +154,7 @@ export const store = createStore<State>({
         } else {
           // キーワードありで条件一致で取得
           const searchedCarehome = await axios.get(
-            `/company/search/${keyword}`
+            `/carehome/search/${keyword}`
           );
           commit('setCareOffices', searchedCarehome.data);
         }

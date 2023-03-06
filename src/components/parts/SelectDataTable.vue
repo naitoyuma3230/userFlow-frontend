@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 
-type Item = Company | Office;
+type Item = Hospital | CareOffice | OtherOffice;
 
 const props = defineProps<{
-  itemData: Array<Item>;
+  itemData: Item[];
   headerName: string;
 }>();
 

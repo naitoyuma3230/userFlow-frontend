@@ -13,6 +13,7 @@ import prefecture from '@/assets/prefecture';
 const store = useStore();
 const router = useRouter();
 
+// 画面操作に伴って変化する選択した法人情報
 let company: Company = reactive({
   id: null,
   name: '',
@@ -61,21 +62,29 @@ const saveCompany = () => {
 
       <div class="content-search__form">
         <TritrusTextField label="法人名" required clearable />
-        <TritrusButton btn-type="search" @click="searchCompanies">全件</TritrusButton>
+        <TritrusButton btn-type="search" @click="searchCompanies"
+          >全件</TritrusButton
+        >
       </div>
     </div>
 
     <div v-if="companies">
       <div class="sub-content">
         <div v-if="companies.length >= 1">
-          <TritrusH2 class="sub-content__title">登録されている法人の選択</TritrusH2>
+          <TritrusH2 class="sub-content__title"
+            >登録されている法人の選択</TritrusH2
+          >
 
           <div class="sub-content__message">
             <p>ご自身の所属する法人を選択してください。</p>
             <p>表示されない場合、新規登録が必要になります。</p>
           </div>
 
-          <SelectDataTable :itemData="companies" headerName="法人名" @selectItem="selectCompany" />
+          <SelectDataTable
+            :itemData="companies"
+            headerName="法人名"
+            @selectItem="selectCompany"
+          />
         </div>
 
         <div v-else-if="companies.length === 0" class="sub-content__message">
@@ -92,8 +101,14 @@ const saveCompany = () => {
         </p>
 
         <TritrusH3 class="form-label"> 法人名 </TritrusH3>
-        <TritrusTextField id="company-text-field" class="form-body" label="法人名" placeholder="社会福祉法人カナミックネットワーク" required
-          v-model="company.name" />
+        <TritrusTextField
+          id="company-text-field"
+          class="form-body"
+          label="法人名"
+          placeholder="社会福祉法人カナミックネットワーク"
+          required
+          v-model="company.name"
+        />
         <v-tooltip activator="#company-text-field" location="bottom left">
           <p>正式名称で入力してください。</p>
           <p style="padding-left: 1rem">株式会社〇〇〇〇</p>
@@ -102,15 +117,30 @@ const saveCompany = () => {
 
         <TritrusH3 class="form-label">住所</TritrusH3>
         <div class="form-body form-address">
-          <TritrusTextField label="郵便番号" required v-model="company.postCode" />
+          <TritrusTextField
+            label="郵便番号"
+            required
+            v-model="company.postCode"
+          />
           <TritrusButton btn-type="search">検索</TritrusButton>
-          <v-select label="都道府県" :items="prefecture" variant="outlined" :hide-details="true" />
+          <v-select
+            label="都道府県"
+            :items="prefecture"
+            variant="outlined"
+            :hide-details="true"
+          />
           <TritrusTextField label="住所" v-model="company.address" />
         </div>
 
         <div class="sub-content__btns">
-          <TritrusButton btn-type="save" left-icon="null" right-icon="icon-Aarrow-right" class="ml-auto"
-            @click="saveCompany">次へ</TritrusButton>
+          <TritrusButton
+            btn-type="save"
+            left-icon="null"
+            right-icon="icon-Aarrow-right"
+            class="ml-auto"
+            @click="saveCompany"
+            >次へ</TritrusButton
+          >
         </div>
       </div>
     </div>

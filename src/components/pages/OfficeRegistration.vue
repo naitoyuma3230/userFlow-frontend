@@ -10,11 +10,10 @@ import SelectDataTable from '@/components/parts/SelectDataTable.vue';
 type CategoryText = '医療機関' | '介護事業所・介護施設' | 'その他';
 type CategoryLabel = '医療機関' | '介護事業所・介護施設' | '事業所';
 
-interface CategoryObj {
+interface Label {
   text: CategoryText;
   value: OfficeCategory;
   label: CategoryLabel;
-  officeList: Array<Hospital | CareOffice | OtherOffice>;
   pathName: string; // vue-router name
 }
 
@@ -24,65 +23,67 @@ const router = useRouter();
 // ofice一覧を取得
 store.dispatch('getOffices');
 
-// selevtの項目と取得した該当施設の一覧
-const categoryItems = computed<Array<CategoryObj>>(() => [
+const hospitals: Hospital[] = store.getters.getHospitals;
+const careOffices: CareOffice[] = store.getters.getCareOffices;
+const otherOffices: OtherOffice[] = store.getters.getOtherOffice;
+
+const labels: Label[] = [
   {
     text: '医療機関',
     value: 'medical',
     label: '医療機関',
-    officeList: store.getters.getHospitals,
     pathName: 'HospitalRegistration',
   },
   {
     text: '介護事業所・介護施設',
     value: 'care',
     label: '介護事業所・介護施設',
-    officeList: store.getters.getCareOffices,
     pathName: 'CareOfficeRegistration',
   },
   {
     text: 'その他',
     value: 'other',
     label: '事業所',
-    officeList: store.getters.getOtherOffices,
     pathName: 'OtherOfficeRegistration',
   },
-]);
+];
 
-// TODO: 表示はされるが時間がかかる
-const officeCategory: OfficeCategory = store.getters.getOfficeCategory;
+const selectedLabel = ref<Label>();
 
-const selectedItem = categoryItems.value.find(
-  (item) => item.value === officeCategory
-)
+const selectedItemsByCategory = computed<
+  Hospital[] | CareOffice[] | OtherOffice[]
+>(() => {
+  switch (selectedLabel.value?.value) {
+    case 'medical':
+      return hospitals;
 
-// 検索結果
-const categoryObj = ref<CategoryObj | null>(selectedItem || null)
+    case 'care':
+      return careOffices;
+
+    default:
+      return otherOffices;
+  }
+});
 
 // selectCategoryのpath情報からRouterで表示
 const selectCategory = (): void => {
-  router.push({ name: categoryObj.value?.pathName });
+  router.push({ name: selectedLabel.value?.pathName });
 };
 
 // globalな状態を更新
 const selectOffice = (thisOffice: Office): void => {
   store.dispatch('setOffice', {
     office: thisOffice,
-    officeCategory: categoryObj.value?.value,
+    officeCategory: selectedLabel.value?.value,
   });
   router.push('/user');
 };
 
-const searchFieldKeyword = ref<string>('')
+const searchFieldKeyword = ref<string>('');
 
-const searchCarehome = (keyword: string) => {
-  store.dispatch('searchCarehome', keyword)
-}
-
-const textFieldInputHandler = () => {
-  searchCarehome(searchFieldKeyword.value)
-}
-
+// const searchCarehome = (keyword: string) => {
+//   store.dispatch('searchCarehome', keyword);
+// };
 </script>
 
 <template>
@@ -91,30 +92,50 @@ const textFieldInputHandler = () => {
 
     <div class="content-search content__message">
       <p class="content-search__message">所属機関の種類を選択してください。</p>
-      <v-select label="所属機関" :items="categoryItems" item-title="text" item-value="value" v-model="categoryObj"
-        class="content-search__form" variant="outlined" @update:model-value="selectCategory" return-object />
+      <v-select
+        label="所属機関"
+        :items="labels"
+        item-title="text"
+        item-value="value"
+        v-model="selectedLabel"
+        class="content-search__form"
+        variant="outlined"
+        @update:model-value="selectCategory"
+        return-object
+      />
     </div>
 
-    <div v-if="categoryObj !== null">
+    <div v-if="selectedLabel">
       <div class="sub-content">
-        <div v-if="categoryObj.officeList.length >= 1">
-          <TritrusH2 class="sub-content__title">登録されている機関の選択</TritrusH2>
+        <div v-if="selectedItemsByCategory.length >= 1">
+          <TritrusH2 class="sub-content__title"
+            >登録されている機関の選択</TritrusH2
+          >
 
           <div class="sub-content__message">
-            <p>ご自身の所属する{{ categoryObj.label }}を選択してください。</p>
+            <p>ご自身の所属する{{ selectedLabel.label }}を選択してください。</p>
             <p>表示されない場合、新規登録が必要になります。</p>
           </div>
 
-
           <!-- TODO: 絞り込み機能 -->
-          <TritrusTextField :label="categoryObj.label" prepend-inner-icon="icon-search" v-model="searchFieldKeyword"
-            @input="textFieldInputHandler" clearable />
+          <TritrusTextField
+            :label="selectedLabel.label"
+            prepend-inner-icon="icon-search"
+            v-model="searchFieldKeyword"
+            clearable
+          />
 
-          <SelectDataTable :itemData="categoryObj.officeList" :headerName="categoryObj.label"
-            @selectItem="selectOffice" />
+          <SelectDataTable
+            :itemData="selectedItemsByCategory"
+            :headerName="selectedLabel.label"
+            @selectItem="selectOffice"
+          />
         </div>
 
-        <div v-else-if="categoryObj.officeList.length == 0" class="sub-content__message">
+        <div
+          v-else-if="selectedItemsByCategory2.length == 0"
+          class="sub-content__message"
+        >
           登録がありません。
         </div>
       </div>
