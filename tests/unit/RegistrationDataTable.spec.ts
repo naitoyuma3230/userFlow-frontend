@@ -11,15 +11,6 @@ describe('プロップステスト', () => {
 
   it('プロップスregistrationDataを渡すとkey,valueがそれぞれth,tdに表示される', () => {
     const wrapper = shallowMount(RegistrationDataTable, {
-      it('プロップスのオブジェクトを渡す', () => {
-      const companyData = {
-        法人名: 'text',
-        郵便番号: 'HELLO',
-        住所: 'Hi',
-      };
-    }
-
-    const wrapper = shallowMount(RegistrationDataTable, {
       props: {
         registrationData: {
           法人名: 'hello',
