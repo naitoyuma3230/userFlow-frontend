@@ -8,19 +8,33 @@ type ErrorRule = (value: string) => true | string;
 
 const attrs = useAttrs();
 
+const props = defineProps<{
+  target?: OfficeCategory;
+}>();
+
 const rules: Array<ErrorRule> = [];
 
-const keyword = ref<string>('')
-
+const keyword = ref<string>('');
 // 選択キーワードを含む法人を取得したい
 const searchCompanies = (inputKeyword: string) => {
-  store.dispatch('searchCompanies', inputKeyword);
+  switch (props.target) {
+    case 'care':
+      store.dispatch('searchCarehome', inputKeyword);
+      break;
+
+    case 'medical':
+      store.dispatch('searchHospital', inputKeyword);
+      break;
+
+    default:
+      store.dispatch('searchCompanies', inputKeyword);
+      break;
+  }
 };
 
 const inputHandler = () => {
-  searchCompanies(keyword.value)
-}
-
+  searchCompanies(keyword.value);
+};
 
 // rule: required
 if ('required' in attrs) {
@@ -39,6 +53,12 @@ if ('min-length' in attrs) {
 </script>
 
 <template>
-  <v-text-field @input="inputHandler" v-model="keyword" variant="outlined" :rules="rules" hide-details="auto"
-    class="text-left" />
+  <v-text-field
+    @input="inputHandler"
+    v-model="keyword"
+    variant="outlined"
+    :rules="rules"
+    hide-details="auto"
+    class="text-left"
+  />
 </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, ComputedRef } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from '@/store';
 import TritrusH1 from '@/components/parts/TritrusH1.vue';
@@ -20,12 +20,14 @@ interface Label {
 const store = useStore();
 const router = useRouter();
 
-// ofice一覧を取得
+// ofice一覧を更新
 store.dispatch('getOffices');
 
-const hospitals: Hospital[] = store.getters.getHospitals;
-const careOffices: CareOffice[] = store.getters.getCareOffices;
-const otherOffices: OtherOffice[] = store.getters.getOtherOffice;
+const hospitals = computed<Hospital[]>(() => store.getters.getHospitals);
+const careOffices = computed<CareOffice[]>(() => store.getters.getCareOffices);
+const otherOffices = computed<OtherOffice[]>(
+  () => store.getters.getOtherOffice
+);
 
 const labels: Label[] = [
   {
@@ -50,23 +52,26 @@ const labels: Label[] = [
 
 const selectedLabel = ref<Label>();
 
-const selectedItemsByCategory = computed<
-  Hospital[] | CareOffice[] | OtherOffice[]
->(() => {
+let selectedItems:
+  | ComputedRef<Hospital[]>
+  | ComputedRef<CareOffice[]>
+  | ComputedRef<OtherOffice[]>;
+
+// Labelのpath情報からRouterで表示
+const selectCategory = (): void => {
   switch (selectedLabel.value?.value) {
     case 'medical':
-      return hospitals;
+      selectedItems = hospitals;
+      break;
 
     case 'care':
-      return careOffices;
+      selectedItems = careOffices;
+      break;
 
     default:
-      return otherOffices;
+      selectedItems = otherOffices;
+      break;
   }
-});
-
-// selectCategoryのpath情報からRouterで表示
-const selectCategory = (): void => {
   router.push({ name: selectedLabel.value?.pathName });
 };
 
@@ -78,12 +83,6 @@ const selectOffice = (thisOffice: Office): void => {
   });
   router.push('/user');
 };
-
-const searchFieldKeyword = ref<string>('');
-
-// const searchCarehome = (keyword: string) => {
-//   store.dispatch('searchCarehome', keyword);
-// };
 </script>
 
 <template>
@@ -107,37 +106,35 @@ const searchFieldKeyword = ref<string>('');
 
     <div v-if="selectedLabel">
       <div class="sub-content">
-        <div v-if="selectedItemsByCategory.length >= 1">
-          <TritrusH2 class="sub-content__title"
-            >登録されている機関の選択</TritrusH2
-          >
+        <div v-if="selectedItems">
+          <div>
+            <TritrusH2 class="sub-content__title"
+              >登録されている機関の選択</TritrusH2
+            >
 
-          <div class="sub-content__message">
-            <p>ご自身の所属する{{ selectedLabel.label }}を選択してください。</p>
-            <p>表示されない場合、新規登録が必要になります。</p>
+            <div class="sub-content__message">
+              <p>
+                ご自身の所属する{{ selectedLabel.label }}を選択してください。
+              </p>
+              <p>表示されない場合、新規登録が必要になります。</p>
+            </div>
+
+            <TritrusTextField
+              :label="selectedLabel.label"
+              prepend-inner-icon="icon-search"
+              clearable
+              :target="selectedLabel.value"
+            />
+
+            <SelectDataTable
+              :itemData="selectedItems"
+              :headerName="selectedLabel.label"
+              @selectItem="selectOffice"
+            />
           </div>
-
-          <!-- TODO: 絞り込み機能 -->
-          <TritrusTextField
-            :label="selectedLabel.label"
-            prepend-inner-icon="icon-search"
-            v-model="searchFieldKeyword"
-            clearable
-          />
-
-          <SelectDataTable
-            :itemData="selectedItemsByCategory"
-            :headerName="selectedLabel.label"
-            @selectItem="selectOffice"
-          />
         </div>
 
-        <div
-          v-else-if="selectedItemsByCategory2.length == 0"
-          class="sub-content__message"
-        >
-          登録がありません。
-        </div>
+        <div v-else class="sub-content__message">登録がありません。</div>
       </div>
 
       <router-view />

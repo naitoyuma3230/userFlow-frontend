@@ -1,14 +1,14 @@
 import { shallowMount } from '@vue/test-utils';
-import TritrusH1 from '@/components/atoms/TritrusH1.vue';
+import TritrusH1 from '@/components/parts/TritrusH1.vue';
 
-describe('TritrusH1.vue', () => {
-  it('見出し文字表示', () => {
-    const text = 'headline 1';
+describe('スロットテスト', () => {
+  it('スロットに"HELLO"を渡すと<h1>タグに"HELLO"が描画される', () => {
     const wrapper = shallowMount(TritrusH1, {
       slots: {
-        default: text,
+        default: 'HELLO',
       },
     });
-    expect(wrapper.text()).toMatch(text);
+
+    expect(wrapper.get('h1').text()).toBe('HELLO');
   });
 });

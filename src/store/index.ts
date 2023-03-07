@@ -147,7 +147,7 @@ export const store = createStore<State>({
     },
     async searchCarehome({ commit }, keyword?: string) {
       try {
-        if (keyword === undefined) {
+        if (!keyword) {
           // キーワードなしで全件取得
           const allCarehome = await axios.get(`/carehome`);
           commit('setCareOffices', allCarehome.data);
@@ -163,6 +163,25 @@ export const store = createStore<State>({
         console.log(e);
       }
     },
+    async searchHospital({ commit }, keyword?: string) {
+      try {
+        if (!keyword) {
+          // キーワードなしで全件取得
+          const allCarehome = await axios.get(`/hospital`);
+          commit('setHospitals', allCarehome.data);
+        } else {
+          // キーワードありで条件一致で取得
+          const searchedCarehome = await axios.get(
+            `/hospital/search/${keyword}`
+          );
+          commit('setHospitals', searchedCarehome.data);
+        }
+      } catch (e) {
+        // TODO エラー時の処理
+        console.log(e);
+      }
+    },
+
     setUsers({ commit }, users: Array<User>) {
       commit('setUsers', users);
     },
