@@ -1,24 +1,27 @@
 import { shallowMount } from '@vue/test-utils';
-import RegistrationComplete from '@/components/pages/RegistrationComplete.vue';
+import RegistrationDataTable from '@/components/parts/RegistrationDataTable.vue';
 
 describe('プロップステスト', () => {
-  it('keyを文字列として取得できるオブジェクトを渡す', () => {
-    interface DataObj {
-      [key: string]: string;
-    }
+  it('プロップスを渡さないとtr,thは描画されない', () => {
+    const wrapper = shallowMount(RegistrationDataTable);
+    expect(wrapper.find('table').exists()).toBe(true);
+    expect(wrapper.find('th').exists()).toBe(false);
+    expect(wrapper.find('tr').exists()).toBe(false);
+  });
 
-    const companyData: DataObj = {
-      法人名: 'text',
-      郵便番号: 'HELLO',
-      住所: 'Hi',
-    };
-
-    const wrapper = shallowMount(RegistrationComplete, {
+  it('プロップスregistrationDataを渡すとkey,valueがそれぞれth,tdに表示される', () => {
+    const wrapper = shallowMount(RegistrationDataTable, {
       props: {
-        registrationData: companyData,
+        registrationData: {
+          法人名: 'hello',
+          郵便番号: 'hi',
+          住所: 'WO',
+        },
       },
     });
-
-    expect(wrapper.find('th').exists()).toBeTruthy();
+    expect(wrapper.findAll('th').at(0)?.text()).toBe('法人名');
+    expect(wrapper.findAll('td').at(0)?.text()).toBe('hello');
+    expect(wrapper.findAll('th').at(1)?.text()).toBe('郵便番号');
+    expect(wrapper.findAll('td').at(1)?.text()).toBe('hi');
   });
 });
