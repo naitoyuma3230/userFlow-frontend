@@ -22,8 +22,8 @@ describe('プロップステスト', () => {
 
     expect(wrapper.findAll('th').at(0)?.text()).toBe('法人名');
     expect(wrapper.findAll('th').at(1)?.text()).toBe('郵便番号');
-    expect(wrapper.findAll('td').at(0)?.text()).toBe('text');
-    expect(wrapper.findAll('td').at(1)?.text()).toBe('HELLO');
+    expect(wrapper.findAll('td').at(0)?.text()).toBe('hello');
+    expect(wrapper.findAll('td').at(1)?.text()).toBe('hi');
   });
 
   it('プロップスを渡さない場合,table要素のみ描画される', () => {

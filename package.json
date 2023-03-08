@@ -9,7 +9,7 @@
     "build": "vue-tsc && vite build",
     "preview": "vite preview",
     "apimock": "json-server -w mock_db.json -p 3003",
-    "test": "jest",
+    "test": "jest --silent",
     "lint": "eslint . --ext .js,.cjs,.ts,.vue && stylelint \"src/**/*.vue\" \"src/*.vue\" \"src/**/*.styl\" \"src/*.styl\"",
     "format": "prettier --write ."
   },
@@ -19,7 +19,7 @@
     "vue": "^3.2.41",
     "vue-router": "^4.1.6",
     "vuetify": "^3.0.1",
-    "vuex": "^4.0.2"
+    "vuex": "^4.1.0"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.20.2",

@@ -57,6 +57,7 @@ const itemClick = (item: Item): void => {
           <p>{{ item.address }}</p>
         </td>
       </tr>
+      <!-- 空のテーブルデータ -->
       <template v-if="items.length < COUNT">
         <tr v-for="n in COUNT - items.length" :key="n" class="item-row">
           <td></td>

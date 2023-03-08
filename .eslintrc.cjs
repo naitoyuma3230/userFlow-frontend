@@ -33,5 +33,6 @@ module.exports = {
         varsIgnorePattern: 'props',
       },
     ],
+    'no-plusplus': 'off',
   },
 };
