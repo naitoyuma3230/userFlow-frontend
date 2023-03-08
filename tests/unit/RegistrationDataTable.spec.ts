@@ -1,16 +1,17 @@
-import { shallowMount } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import RegistrationDataTable from '@/components/parts/RegistrationDataTable.vue';
+import { test, expect, describe } from 'vitest';
 
 describe('プロップステスト', () => {
-  it('プロップスを渡さないとtr,thは描画されない', () => {
-    const wrapper = shallowMount(RegistrationDataTable);
+  test('プロップスを渡さないとtr,thは描画されない', () => {
+    const wrapper = mount(RegistrationDataTable);
     expect(wrapper.find('table').exists()).toBe(true);
     expect(wrapper.find('th').exists()).toBe(false);
     expect(wrapper.find('tr').exists()).toBe(false);
   });
 
-  it('プロップスregistrationDataを渡すとkey,valueがそれぞれth,tdに表示される', () => {
-    const wrapper = shallowMount(RegistrationDataTable, {
+  test('プロップスregistrationDataを渡すとkey,valueがそれぞれth,tdに表示される', () => {
+    const wrapper = mount(RegistrationDataTable, {
       props: {
         registrationData: {
           法人名: 'hello',
@@ -26,8 +27,8 @@ describe('プロップステスト', () => {
     expect(wrapper.findAll('td').at(1)?.text()).toBe('hi');
   });
 
-  it('プロップスを渡さない場合,table要素のみ描画される', () => {
-    const wrapper = shallowMount(RegistrationDataTable);
+  test('プロップスを渡さない場合,table要素のみ描画される', () => {
+    const wrapper = mount(RegistrationDataTable);
 
     expect(wrapper.find('table').exists()).toBe(true);
     expect(wrapper.find('th').exists()).toBe(false);

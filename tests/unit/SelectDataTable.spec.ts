@@ -1,10 +1,13 @@
-import { shallowMount, mount } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import SelectDataTable from '@/components/parts/SelectDataTable.vue';
+import { test, expect, describe } from 'vitest';
+import vuetify from '@/plugins/vuetify';
+import { computed } from 'vue';
 
 type Item = Hospital | CareOffice | OtherOffice;
 
 describe('プロップステスト', () => {
-  it('プロップスでitemDataとheaderNameを渡すとテーブルに表示される', () => {
+  test('プロップスでitemDataとheaderNameを渡すとテーブルに表示される', () => {
     const itemProps: Item[] = [
       {
         id: 10,
@@ -26,7 +29,7 @@ describe('プロップステスト', () => {
       },
     ];
 
-    const wrapper = shallowMount(SelectDataTable, {
+    const wrapper = mount(SelectDataTable, {
       props: {
         itemData: itemProps,
         headerName: 'head',
@@ -44,7 +47,7 @@ describe('プロップステスト', () => {
   });
 });
 describe('データを渡してテーブルの表示をチェックする', () => {
-  it('データ数が4件未満ではデータ数分のテーブルと、補完のダミーを合わせて5件表示される', () => {
+  test('データ数が4件未満ではデータ数分のテーブルと、補完のダミーを合わせて5件表示される', () => {
     const testData: Item[] = [];
 
     const dataCount = 3;
@@ -60,10 +63,13 @@ describe('データを渡してテーブルの表示をチェックする', () =
       };
       testData.push(obj);
     }
-    const wrapper = shallowMount(SelectDataTable, {
+    const wrapper = mount(SelectDataTable, {
       props: {
         itemData: testData,
         headerName: 'manyData',
+      },
+      global: {
+        plugins: [vuetify],
       },
     });
     // 総データ
@@ -77,7 +83,7 @@ describe('データを渡してテーブルの表示をチェックする', () =
     ).toBe('');
   });
 
-  it('データ数が6以上では5件表示される。', () => {
+  test('データ数が6以上では5件表示される。', () => {
     const testData: Item[] = [];
 
     const dataCount = 20;
@@ -93,10 +99,13 @@ describe('データを渡してテーブルの表示をチェックする', () =
       };
       testData.push(obj);
     }
-    const wrapper = shallowMount(SelectDataTable, {
+    const wrapper = mount(SelectDataTable, {
       props: {
         itemData: testData,
         headerName: 'manyData',
+      },
+      global: {
+        plugins: [vuetify],
       },
     });
     expect(wrapper.findAll('th').at(0)?.text()).toBe('manyData');
@@ -106,7 +115,7 @@ describe('データを渡してテーブルの表示をチェックする', () =
 });
 
 describe('テーブルクリックのエミットテスト', () => {
-  it('データテーブルをクリックすると,tdのitem情報がselectItemに渡りemitされる', async () => {
+  test('データテーブルをクリックすると,tdのitem情報がselectItemに渡りemitされる', async () => {
     const dataCount = 24;
     const testData: Item[] = [];
     for (let i = 0; i < dataCount; i++) {
@@ -121,10 +130,13 @@ describe('テーブルクリックのエミットテスト', () => {
       };
       testData.push(obj);
     }
-    const wrapper = shallowMount(SelectDataTable, {
+    const wrapper = mount(SelectDataTable, {
       props: {
         itemData: testData,
         headerName: 'manyData',
+      },
+      global: {
+        plugins: [vuetify],
       },
     });
     // tdクリック
@@ -148,7 +160,7 @@ describe('テーブルクリックのエミットテスト', () => {
       departments: [`デパート1-0`, `デパート2-0`],
     });
   });
-  it('空のテーブルをクリックしてもエミットされない', async () => {
+  test('空のテーブルをクリックしてもエミットされない', async () => {
     const dataCount = 2;
     const testData: Item[] = [];
     for (let i = 0; i < dataCount; i++) {
@@ -163,10 +175,13 @@ describe('テーブルクリックのエミットテスト', () => {
       };
       testData.push(obj);
     }
-    const wrapper = shallowMount(SelectDataTable, {
+    const wrapper = mount(SelectDataTable, {
       props: {
         itemData: testData,
         headerName: 'manyData',
+      },
+      global: {
+        plugins: [vuetify],
       },
     });
     // tdクリック
@@ -204,8 +219,11 @@ describe('pageに応じた算出プロパティitemsのテスト', () => {
       itemData: testData,
       headerName: 'manyData',
     },
+    global: {
+      plugins: [vuetify],
+    },
   });
-  it('pageの値が1の時、itemsの最初の一件はitemData全体の最初の1件と一致する', () => {
+  test('pageの値が1の時、itemsの最初の一件はitemData全体の最初の1件と一致する', () => {
     const firstitem: Item[] = wrapper.vm.items;
     expect(firstitem[0]).toStrictEqual({
       id: 0,
@@ -217,8 +235,8 @@ describe('pageに応じた算出プロパティitemsのテスト', () => {
       departments: [`デパート1-0`, `デパート2-0`],
     });
   });
-  it('pageNationのv-modelの参照先pageを4に変更した時、itemDataの最初の1件がitems16件目と一致する', async () => {
-    wrapper.vm.page = 4;
+  test('pageNationのv-modelの参照先pageを4に変更した時、itemDataの最初の1件がitems16件目と一致する', async () => {
+    wrapper.vm.$refs.page = 4;
     const firstitem: Item[] = wrapper.vm.items;
     expect(firstitem[0]).toStrictEqual({
       id: 15,

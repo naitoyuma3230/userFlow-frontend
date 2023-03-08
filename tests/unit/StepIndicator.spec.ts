@@ -1,7 +1,9 @@
-import { shallowMount } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import StepIndicator from '@/components/parts/StepIndicator.vue';
 import router from '@/router';
 import { createStore } from 'vuex';
+import { test, expect, describe } from 'vitest';
+import vuetify from '@/plugins/vuetify';
 
 const store = createStore({
   state: {
@@ -28,12 +30,12 @@ const store = createStore({
 // vue-routerから現在のURLを取得し状態に当てはめる
 // ナビゲーションガードを使用し、urlの直打ちリンクを防止する(ここではテストしない)
 describe('vue-routerとstepの状態テスト。', () => {
-  const wrapper = shallowMount(StepIndicator, {
+  const wrapper = mount(StepIndicator, {
     global: {
-      plugins: [store],
+      plugins: [store, vuetify],
     },
   });
-  it('vue-routerの状態に対応してstepが0～3まで設定される', async () => {
+  test('vue-routerの状態に対応してstepが0～3まで設定される', async () => {
     // step変数はroute.name:OfficeRegistrationもしくは path'/'の場合0
     router.push('/');
     await router.isReady();
@@ -60,7 +62,7 @@ describe('vue-routerとstepの状態テスト。', () => {
     await router.isReady();
     expect(wrapper.vm.step).toBe(3);
   });
-  it('stepの状態に応じてstep-itemのクラスにcompletionが追加される', async () => {
+  test('stepの状態に応じてstep-itemのクラスにcompletionが追加される', async () => {
     // step1では最初の要素のみクラスcompletionが付く
     router.push('/');
     await router.isReady();
