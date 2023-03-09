@@ -5,24 +5,6 @@ import { createStore } from 'vuex';
 import { test, expect, describe } from 'vitest';
 import vuetify from '@/plugins/vuetify';
 
-const store = createStore({
-  state: {
-    step: {
-      company: true,
-      office: false,
-      user: false,
-      check: false,
-    },
-  },
-  getters: {
-    getStep(state) {
-      return state.step;
-    },
-  },
-  mutations: {},
-  actions: {},
-});
-
 /* 現状の状態管理ではリロードなどでイレギュラーが発生 */
 
 // 法人登録、所属機関、申請者情報、入力内容確認の順に手続きが進む
@@ -30,6 +12,23 @@ const store = createStore({
 // vue-routerから現在のURLを取得し状態に当てはめる
 // ナビゲーションガードを使用し、urlの直打ちリンクを防止する(ここではテストしない)
 describe('vue-routerとstepの状態テスト。', () => {
+  const store = createStore({
+    state: {
+      step: {
+        company: true,
+        office: false,
+        user: false,
+        check: false,
+      },
+    },
+    getters: {
+      getStep(state) {
+        return state.step;
+      },
+    },
+    mutations: {},
+    actions: {},
+  });
   const wrapper = mount(StepIndicator, {
     global: {
       plugins: [store, vuetify],

@@ -2,7 +2,6 @@ import { mount } from '@vue/test-utils';
 import SelectDataTable from '@/components/parts/SelectDataTable.vue';
 import { test, expect, describe } from 'vitest';
 import vuetify from '@/plugins/vuetify';
-import { computed } from 'vue';
 
 type Item = Hospital | CareOffice | OtherOffice;
 
@@ -33,6 +32,9 @@ describe('プロップステスト', () => {
       props: {
         itemData: itemProps,
         headerName: 'head',
+      },
+      global: {
+        plugins: [vuetify],
       },
     });
 
@@ -223,29 +225,23 @@ describe('pageに応じた算出プロパティitemsのテスト', () => {
       plugins: [vuetify],
     },
   });
-  test('pageの値が1の時、itemsの最初の一件はitemData全体の最初の1件と一致する', () => {
-    const firstitem: Item[] = wrapper.vm.items;
-    expect(firstitem[0]).toStrictEqual({
-      id: 0,
-      nameKana: `kana0`,
-      name: `name0`,
-      code: `code0`,
-      postCode: `postCode0`,
-      address: `address0`,
-      departments: [`デパート1-0`, `デパート2-0`],
-    });
+  test('pageの値が1の時、テーブル表示の最初の一件はitemData全体の最初の1件と一致する', async () => {
+    await wrapper.setProps({ page: 1 });
+    const firstTr = wrapper
+      .findAll('.item-list__body')
+      .at(0)
+      .findAll('tr')
+      .at(0);
+    expect(firstTr.find('td').text()).toBe('name0');
   });
   test('pageNationのv-modelの参照先pageを4に変更した時、itemDataの最初の1件がitems16件目と一致する', async () => {
-    wrapper.vm.$refs.page = 4;
-    const firstitem: Item[] = wrapper.vm.items;
-    expect(firstitem[0]).toStrictEqual({
-      id: 15,
-      nameKana: `kana15`,
-      name: `name15`,
-      code: `code15`,
-      postCode: `postCode15`,
-      address: `address15`,
-      departments: [`デパート1-15`, `デパート2-15`],
-    });
+    await wrapper.setProps({ page: 4 });
+
+    const firstTr = wrapper
+      .findAll('.item-list__body')
+      .at(0)
+      .findAll('tr')
+      .at(0);
+    expect(firstTr.find('td').text()).toBe('name15');
   });
 });
