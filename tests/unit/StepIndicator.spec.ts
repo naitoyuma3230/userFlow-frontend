@@ -4,12 +4,19 @@ import router from '@/router';
 import { createStore } from 'vuex';
 
 const store = createStore({
-  state: {
-    step: {
-      company: true,
-      office: false,
-      user: false,
-      check: false,
+  state() {
+    return {
+      step: {
+        company: true,
+        office: false,
+        user: false,
+        check: false,
+      },
+    };
+  },
+  mutations: {
+    increment(state: any) {
+      state.count += 1;
     },
   },
   getters: {
@@ -17,8 +24,6 @@ const store = createStore({
       return state.step;
     },
   },
-  mutations: {},
-  actions: {},
 });
 
 /* 現状の状態管理ではリロードなどでイレギュラーが発生 */

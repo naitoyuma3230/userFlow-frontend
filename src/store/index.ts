@@ -100,9 +100,9 @@ export const store = createStore<State>({
   },
   actions: {
     // TODO: 文字列検索機能追加
-    async searchCompanies({ commit }, keyword?: string) {
+    async searchCompanies({ commit }, keyword: string) {
       try {
-        if (keyword === undefined) {
+        if (keyword === '') {
           // キーワードなしで全件取得
           const allCompany = await axios.get(`/company`);
           commit('setCompanies', allCompany.data);

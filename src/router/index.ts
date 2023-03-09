@@ -7,6 +7,7 @@ import UserRegistration from '@/components/pages/UserRegistration.vue';
 import FinalConfirmation from '@/components/pages/FinalConfirmation.vue';
 import RegistrationComplete from '@/components/pages/RegistrationComplete.vue';
 import CompanyRegistration from '@/components/pages/CompanyRegistration.vue';
+import OpenAi from '@/components/pages/OpenAi.vue';
 
 const routes = [
   {
@@ -47,6 +48,11 @@ const routes = [
     path: '/complete',
     name: 'RegistrationComplete',
     component: RegistrationComplete,
+  },
+  {
+    path: '/openai',
+    name: 'OpenAi',
+    component: OpenAi,
   },
 ];
 

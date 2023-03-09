@@ -17,17 +17,18 @@ const rules: Array<ErrorRule> = [];
 const keyword = ref<string>('');
 // 選択キーワードを含む法人を取得したい
 const searchCompanies = (inputKeyword: string) => {
+  const setWord = inputKeyword || '';
   switch (props.target) {
     case 'care':
-      store.dispatch('searchCarehome', inputKeyword);
+      store.dispatch('searchCarehome', setWord);
       break;
 
     case 'medical':
-      store.dispatch('searchHospital', inputKeyword);
+      store.dispatch('searchHospital', setWord);
       break;
 
     default:
-      store.dispatch('searchCompanies', inputKeyword);
+      store.dispatch('searchCompanies', setWord);
       break;
   }
 };
