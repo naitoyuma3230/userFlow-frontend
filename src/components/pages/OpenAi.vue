@@ -1,42 +1,141 @@
 <script setup lang="ts">
 import axios from '@/plugins/axios';
-import { ref } from 'vue';
+import { ref, reactive } from 'vue';
 
 type PostMessage = {
   message: string;
 };
 
+type Answer = {
+  content: string;
+  isLiked: boolean | null;
+};
+
+type QuestionAnswer = {
+  question: {
+    content: string;
+  };
+  answer: {
+    content: string;
+    isLiked: boolean | null;
+  };
+};
+
+const questionAnswers = reactive<QuestionAnswer[]>([
+  {
+    question: {
+      content: 'サポートシステムです。',
+    },
+    answer: {
+      content: 'これはサンプルの回答です。',
+      isLiked: null,
+    },
+  },
+  {
+    question: {
+      content: 'これはデフォルトの質問です',
+    },
+    answer: {
+      content: 'これはデフォルトの回答内容です。',
+      isLiked: null,
+    },
+  },
+]);
+
 const formQuestion = ref<string>('');
 
-const answers = ref<string[]>([]);
-
 const postQuestion = async (question: PostMessage): Promise<any> =>
-  axios.post('/openai', question);
+  axios.post('/openai', JSON.stringify(question), {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
 
-const loading = ref<boolean[]>([false, true]);
+const loading = ref<boolean[]>([false, false]);
 
 const questionHandler = async () => {
   const postMessage = {
     message: formQuestion.value,
   };
-  loading.value[0] = true
-  const postAnser = await postQuestion(postMessage);
+  loading.value[0] = true;
+  const returnAnser = await postQuestion(postMessage);
+  const newQuestionAnser = {
+    question: {
+      content: formQuestion.value,
+    },
+    answer: {
+      content: returnAnser.data.content,
+      isLiked: null,
+    },
+  };
+  questionAnswers.push(newQuestionAnser);
   formQuestion.value = '';
-  answers.value.push(postAnser.data.content);
-  loading.value[0] = false
+  loading.value[0] = false;
 };
 
+const postQuestionAnswer = async (
+  questionAnswer: QuestionAnswer
+): Promise<Answer> =>
+  axios.post('/openai/qa', JSON.stringify(questionAnswer), {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+const postQuestionAnswerHandler = async (bool: boolean, i: number) => {
+  loading.value[i] = true;
+  questionAnswers[i].answer.isLiked = bool;
+  const result = await postQuestionAnswer(questionAnswers[i]);
+  loading.value[i] = false;
+  return result;
+};
 </script>
 
 <template>
-  <v-alert class="mb-2" max-width="400px" type="info" border="bottom" border-color="deep-purple accent-4"
-    v-for="(answer, i) in answers" :key="i">{{ answer }}
+  <v-alert
+    class="mb-2"
+    max-width="400px"
+    type="info"
+    border="bottom"
+    border-color="deep-purple accent-4"
+    v-for="(questionAnswer, i) in questionAnswers"
+    :key="i"
+    >{{ questionAnswer.answer.content }}
     <div class="d-flex justify-end align-center">
-      <v-btn icon="mdi-thumb-up" size="small" variant="outlined" :loading="loading[1]" :disabled="loading[1]"></v-btn>
+      <v-btn
+        v-show="
+          questionAnswer.answer.isLiked || questionAnswer.answer.isLiked == null
+        "
+        icon="mdi-thumb-up"
+        size="x-small"
+        variant="outlined"
+        :loading="loading[i]"
+        :disabled="loading[i] || questionAnswer.answer.isLiked !== null"
+        class="mx-1"
+        @click="postQuestionAnswerHandler(true, i)"
+      ></v-btn>
+      <v-btn
+        v-show="
+          !questionAnswer.answer.isLiked ||
+          questionAnswer.answer.isLiked == null
+        "
+        icon="mdi-thumb-down"
+        size="x-small"
+        variant="outlined"
+        :loading="loading[i]"
+        :disabled="loading[i] || questionAnswer.answer.isLiked !== null"
+        class="mx-1"
+        @click="postQuestionAnswerHandler(false, i)"
+      ></v-btn>
     </div>
   </v-alert>
   <v-textarea label="質問内容" v-model="formQuestion"></v-textarea>
-  <v-btn color="info" :loading="loading[0]" :disabled="loading[0]" @click="questionHandler()"> 質問する
+  <v-btn
+    color="info"
+    :loading="loading[0]"
+    :disabled="loading[0]"
+    @click="questionHandler()"
+  >
+    質問する
     <template v-slot:loader>
       <span class="custom-loader">
         <v-icon light>mdi-cached</v-icon>

@@ -14,6 +14,12 @@ interface State {
   users: Array<User> | null;
 }
 
+interface PostNewUsersData {
+  users: {};
+  company: Company;
+  office: Office;
+}
+
 export const key: InjectionKey<Store<State>> = Symbol('InjectionKey');
 
 export const store = createStore<State>({
@@ -167,14 +173,14 @@ export const store = createStore<State>({
       try {
         if (!keyword) {
           // キーワードなしで全件取得
-          const allCarehome = await axios.get(`/hospital`);
-          commit('setHospitals', allCarehome.data);
+          const allHospital = await axios.get(`/hospital`);
+          commit('setHospitals', allHospital.data);
         } else {
           // キーワードありで条件一致で取得
-          const searchedCarehome = await axios.get(
+          const searchedHospital = await axios.get(
             `/hospital/search/${keyword}`
           );
-          commit('setHospitals', searchedCarehome.data);
+          commit('setHospitals', searchedHospital.data);
         }
       } catch (e) {
         // TODO エラー時の処理
@@ -187,7 +193,7 @@ export const store = createStore<State>({
     },
     async saveNewUser({ state }) {
       const { company, office, users } = state;
-      const newUsers = {
+      const newUsers: PostNewUsersData = {
         users,
         company,
         office,
