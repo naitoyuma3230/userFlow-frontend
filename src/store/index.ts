@@ -14,8 +14,8 @@ interface State {
   users: Array<User> | null;
 }
 
-interface PostNewUsersData {
-  users: {};
+interface NewUsersWithOffice {
+  users: User[];
   company: Company;
   office: Office;
 }
@@ -193,16 +193,20 @@ export const store = createStore<State>({
     },
     async saveNewUser({ state }) {
       const { company, office, users } = state;
-      const newUsers: PostNewUsersData = {
-        users,
-        company,
-        office,
-      };
-      try {
-        await axios.post('/user', newUsers);
-      } catch (e) {
-        // TODO エラー時の処理
-        console.log(e);
+      if (users && company && office) {
+        const newUsers: NewUsersWithOffice = {
+          users,
+          company,
+          office,
+        };
+        try {
+          if (office instanceof Hospital) {
+            await axios.post('/user', newUsers);
+          }
+        } catch (e) {
+          // TODO エラー時の処理
+          console.log(e);
+        }
       }
     },
   },
